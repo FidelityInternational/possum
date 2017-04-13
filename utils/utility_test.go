@@ -415,10 +415,10 @@ var _ = Describe("#SetupStateDB", func() {
 			}
 			defer db.Close()
 
-			mock.ExpectExec("CREATE TABLE").WillReturnError(fmt.Errorf("An error has occured: %s", "Database Create Error"))
+			mock.ExpectExec("CREATE TABLE").WillReturnError(fmt.Errorf("An error has occurred: %s", "Database Create Error"))
 			err = utils.SetupStateDB(db)
 			Ω(err).ShouldNot(BeNil())
-			Ω(err.Error()).Should(Equal("An error has occured: Database Create Error"))
+			Ω(err.Error()).Should(Equal("An error has occurred: Database Create Error"))
 		})
 	})
 })
@@ -749,9 +749,9 @@ var _ = Describe("#WriteState", func() {
 			}
 			defer db.Close()
 
-			mock.ExpectExec("UPDATE state.*").WithArgs("alive", "joey").WillReturnError(fmt.Errorf("An error has occured: %s", "UPDATE error"))
+			mock.ExpectExec("UPDATE state.*").WithArgs("alive", "joey").WillReturnError(fmt.Errorf("An error has occurred: %s", "UPDATE error"))
 			err = utils.WriteState(db, "joey", "alive")
-			Ω(err).Should(MatchError("An error has occured: UPDATE error"))
+			Ω(err).Should(MatchError("An error has occurred: UPDATE error"))
 		})
 	})
 })

@@ -27,6 +27,7 @@ type Controller struct {
 	HTTPClient *http.Client
 }
 
+// PossumStates struct
 type PossumStates struct {
 	PossumStates map[string]string `json:"possum_states"`
 	Error        string            `json:"error"`
@@ -41,8 +42,8 @@ func CreateController(db *sql.DB) *Controller {
 	}
 }
 
+// GetState - Get state of a single possum
 func (c *Controller) GetState(w http.ResponseWriter, r *http.Request) {
-
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", loadCORSAllowed())
 	myURIs, err := utils.GetMyApplicationURIs()
@@ -78,6 +79,7 @@ func (c *Controller) GetState(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, `{"error": "Could not match any possum in db"}`)
 }
 
+// GetPasselState - Get state of the entire passel
 func (c *Controller) GetPasselState(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", loadCORSAllowed())
@@ -95,6 +97,7 @@ func (c *Controller) GetPasselState(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, fmt.Sprintf(`{"possum_states": %s}`, string(possumStatesBytes)))
 }
 
+// GetPasselStateConsistency - Get the state conistency of the passel
 func (c *Controller) GetPasselStateConsistency(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", loadCORSAllowed())
@@ -116,6 +119,7 @@ func (c *Controller) GetPasselStateConsistency(w http.ResponseWriter, r *http.Re
 	fmt.Fprintf(w, fmt.Sprintf(`{"consistent": true, "passel_states": %s}`, string(passelStatesBytes)))
 }
 
+// SetState - set the possum state
 func (c *Controller) SetState(w http.ResponseWriter, r *http.Request) {
 	if !checkAuth(w, r) {
 		w.WriteHeader(401)
@@ -187,6 +191,7 @@ func (c *Controller) SetState(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, `{"error": "Could not match any possum in db"}`)
 }
 
+// SetPasselState - Set the state of the entire passel
 func (c *Controller) SetPasselState(w http.ResponseWriter, r *http.Request) {
 	if !checkAuth(w, r) {
 		w.WriteHeader(401)
@@ -233,7 +238,7 @@ func (c *Controller) SetPasselState(w http.ResponseWriter, r *http.Request) {
 
 func standardError(err error, w http.ResponseWriter) bool {
 	if err != nil {
-		fmt.Println("An error occured:")
+		fmt.Println("An error occurred:")
 		fmt.Println(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, fmt.Sprintf(`{"error": "%s"}`, err.Error()))
@@ -243,7 +248,7 @@ func standardError(err error, w http.ResponseWriter) bool {
 }
 
 func customError(w http.ResponseWriter, statusCode int, err string) {
-	fmt.Println("An error occured:")
+	fmt.Println("An error occurred:")
 	fmt.Println(err)
 	w.WriteHeader(statusCode)
 	fmt.Fprintf(w, fmt.Sprintf(`{"error": "%s"}`, err))
@@ -253,7 +258,7 @@ func stateInconsistentError(w http.ResponseWriter, passelStates []map[string]str
 	if !consistent {
 		passelStatesBytes, _ := json.Marshal(passelStates)
 		passelStatesString := string(passelStatesBytes)
-		fmt.Println("An error occured:")
+		fmt.Println("An error occurred:")
 		w.WriteHeader(http.StatusInternalServerError)
 		if customError == "" {
 			fmt.Printf("State was inconsistent: \n%s\n", passelStatesString)

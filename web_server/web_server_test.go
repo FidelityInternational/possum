@@ -38,7 +38,7 @@ func mockFailedStateDBConn(driverName string, connectionString string) (*sql.DB,
 		fmt.Printf("\nan error '%s' was not expected when opening a stub database connection\n", err)
 		os.Exit(1)
 	}
-	mock.ExpectExec("CREATE TABLE IF NOT EXISTS state.").WillReturnError(fmt.Errorf("An error has occured: %s", "Database Create Error"))
+	mock.ExpectExec("CREATE TABLE IF NOT EXISTS state.").WillReturnError(fmt.Errorf("An error has occurred: %s", "Database Create Error"))
 	return db, err
 }
 
@@ -64,7 +64,7 @@ func mockDBConn(driverName string, connectionString string) (*sql.DB, error) {
 
 func mockErrDBConn(driverName string, connectionString string) (*sql.DB, error) {
 	db, _, err := sqlmock.New()
-	err = fmt.Errorf("An error has occured: %s", "Conn String Fetch Error")
+	err = fmt.Errorf("An error has occurred: %s", "Conn String Fetch Error")
 	return db, err
 }
 
@@ -124,7 +124,7 @@ var _ = Describe("Server", func() {
 			Context("and fetching the connection string raises an error", func() {
 				It("returns an error", func() {
 					_, err := webs.CreateServer(mockErrDBConn, mockCreateController)
-					Ω(err).Should(MatchError("An error has occured: Conn String Fetch Error"))
+					Ω(err).Should(MatchError("An error has occurred: Conn String Fetch Error"))
 				})
 			})
 
@@ -139,7 +139,7 @@ var _ = Describe("Server", func() {
 				Context("and SetupStateDB raises an error", func() {
 					It("returns an error", func() {
 						_, err := webs.CreateServer(mockFailedStateDBConn, mockCreateController)
-						Ω(err).Should(MatchError("An error has occured: Database Create Error"))
+						Ω(err).Should(MatchError("An error has occurred: Database Create Error"))
 					})
 				})
 			})
@@ -1094,13 +1094,13 @@ var _ = Describe("Controller", func() {
 										BeforeEach(func() {
 											fakeServer1 = setup(MockRoute{"GET", "/v1/passel_state", `{"error": "This is an error"}`, "", 0})
 											requestBody = bytes.NewReader([]byte(`{}`))
-											applicationUriSplit := strings.Split(fakeServer1.URL, "http://")
-											applicationUri := applicationUriSplit[1]
+											applicationURISplit := strings.Split(fakeServer1.URL, "http://")
+											applicationURI := applicationURISplit[1]
 											vcapApplicationJSON := fmt.Sprintf(`{
   "application_uris": [
     "%s"
   ]
-}`, applicationUri)
+}`, applicationURI)
 											vcapServicesJSON := fmt.Sprintf(`{
 "user-provided": [
  {
@@ -1138,13 +1138,13 @@ var _ = Describe("Controller", func() {
 												fakeServer1 = setupMultiple([]MockRoute{
 													{"GET", "/v1/passel_state", `{"possum_states": {"father":"alive","joey":"dead","mother":"alive"}}`, "", 0},
 												})
-												applicationUriSplit := strings.Split(fakeServer1.URL, "http://")
-												applicationUri := applicationUriSplit[1]
+												applicationURISplit := strings.Split(fakeServer1.URL, "http://")
+												applicationURI := applicationURISplit[1]
 												vcapApplicationJSON := fmt.Sprintf(`{
   "application_uris": [
     "%s"
   ]
-}`, applicationUri)
+}`, applicationURI)
 												vcapServicesJSON := fmt.Sprintf(`{
 "user-provided": [
  {
@@ -1184,13 +1184,13 @@ var _ = Describe("Controller", func() {
 														{"GET", "/v1/passel_state", `{"possum_states": {}}`, "", 0},
 													})
 													requestBody = bytes.NewReader([]byte(fmt.Sprintf(`{"%s":"dead"}`, fakeServer1.URL)))
-													applicationUriSplit := strings.Split(fakeServer1.URL, "http://")
-													applicationUri := applicationUriSplit[1]
+													applicationURISplit := strings.Split(fakeServer1.URL, "http://")
+													applicationURI := applicationURISplit[1]
 													vcapApplicationJSON := fmt.Sprintf(`{
   "application_uris": [
     "%s"
   ]
-}`, applicationUri)
+}`, applicationURI)
 													vcapServicesJSON := fmt.Sprintf(`{
 "user-provided": [
  {
@@ -1265,13 +1265,13 @@ var _ = Describe("Controller", func() {
 																{"GET", "/v1/passel_state", `{"possum_states": {"father":"alive","joey":"dead","mother":"alive"}}`, "", 0},
 															})
 															requestBody = bytes.NewReader([]byte(fmt.Sprintf(`{"%s":"dead"}`, fakeServer1.URL)))
-															applicationUriSplit := strings.Split(fakeServer1.URL, "http://")
-															applicationUri := applicationUriSplit[1]
+															applicationURISplit := strings.Split(fakeServer1.URL, "http://")
+															applicationURI := applicationURISplit[1]
 															vcapApplicationJSON := fmt.Sprintf(`{
   "application_uris": [
     "%s"
   ]
-}`, applicationUri)
+}`, applicationURI)
 															vcapServicesJSON := fmt.Sprintf(`{
 "user-provided": [
  {
@@ -1291,7 +1291,7 @@ var _ = Describe("Controller", func() {
 }`, fakeServer1.URL)
 															os.Setenv("VCAP_APPLICATION", vcapApplicationJSON)
 															os.Setenv("VCAP_SERVICES", vcapServicesJSON)
-															mock.ExpectExec("UPDATE state.*").WillReturnError(fmt.Errorf("An error has occured: %s", "UPDATE error"))
+															mock.ExpectExec("UPDATE state.*").WillReturnError(fmt.Errorf("An error has occurred: %s", "UPDATE error"))
 
 														})
 
@@ -1301,7 +1301,7 @@ var _ = Describe("Controller", func() {
 
 														It("returns an error", func() {
 															Ω(mockRecorder.Code).Should(Equal(500))
-															Ω(mockRecorder.Body.String()).Should(Equal(`{"error": "An error has occured: UPDATE error"}`))
+															Ω(mockRecorder.Body.String()).Should(Equal(`{"error": "An error has occurred: UPDATE error"}`))
 														})
 													})
 
@@ -1319,13 +1319,13 @@ var _ = Describe("Controller", func() {
 																	{"GET", "/v1/passel_state", "", `{"possum_states": her":"dead","joey":"alive","mother":"dead"}}`, 1},
 																})
 																requestBody = bytes.NewReader([]byte(fmt.Sprintf(`{"%s":"dead"}`, fakeServer1.URL)))
-																applicationUriSplit := strings.Split(fakeServer1.URL, "http://")
-																applicationUri := applicationUriSplit[1]
+																applicationURISplit := strings.Split(fakeServer1.URL, "http://")
+																applicationURI := applicationURISplit[1]
 																vcapApplicationJSON := fmt.Sprintf(`{
   "application_uris": [
     "%s"
   ]
-}`, applicationUri)
+}`, applicationURI)
 																vcapServicesJSON := fmt.Sprintf(`{
 "user-provided": [
  {
@@ -1365,13 +1365,13 @@ var _ = Describe("Controller", func() {
 																		{"GET", "/v1/passel_state", "", `{"possum_states": {"father":"alive","joey":"dead","mother":"alive"}}`, 1},
 																	})
 																	requestBody = bytes.NewReader([]byte(fmt.Sprintf(`{"%s":"dead"}`, fakeServer1.URL)))
-																	applicationUriSplit := strings.Split(fakeServer1.URL, "http://")
-																	applicationUri := applicationUriSplit[1]
+																	applicationURISplit := strings.Split(fakeServer1.URL, "http://")
+																	applicationURI := applicationURISplit[1]
 																	vcapApplicationJSON := fmt.Sprintf(`{
   "application_uris": [
     "%s"
   ]
-}`, applicationUri)
+}`, applicationURI)
 																	vcapServicesJSON := fmt.Sprintf(`{
 "user-provided": [
  {
@@ -1410,13 +1410,13 @@ var _ = Describe("Controller", func() {
 																		{"GET", "/v1/passel_state", "", `{"possum_states": {"father":"dead","joey":"dead","mother":"alive"}}`, 1},
 																	})
 																	requestBody = bytes.NewReader([]byte(fmt.Sprintf(`{"%s":"dead"}`, "father")))
-																	applicationUriSplit := strings.Split(fakeServer1.URL, "http://")
-																	applicationUri := applicationUriSplit[1]
+																	applicationURISplit := strings.Split(fakeServer1.URL, "http://")
+																	applicationURI := applicationURISplit[1]
 																	vcapApplicationJSON := fmt.Sprintf(`{
   "application_uris": [
     "%s"
   ]
-}`, applicationUri)
+}`, applicationURI)
 																	vcapServicesJSON := fmt.Sprintf(`{
 "user-provided": [
  {
@@ -1776,13 +1776,13 @@ var _ = Describe("Controller", func() {
  }
 ]
 }`, fakeServer1.URL, fakeServer2.URL)
-								applicationUriSplit := strings.Split(fakeServer1.URL, "http://")
-								applicationUri := applicationUriSplit[1]
+								applicationURISplit := strings.Split(fakeServer1.URL, "http://")
+								applicationURI := applicationURISplit[1]
 								vcapApplicationJSON := fmt.Sprintf(`{
   "application_uris": [
     "%s"
   ]
-}`, applicationUri)
+}`, applicationURI)
 								os.Setenv("VCAP_APPLICATION", vcapApplicationJSON)
 								os.Setenv("VCAP_SERVICES", vcapServicesJSON)
 								requestBody = bytes.NewReader([]byte(`{"possum_states":{"mother": "dead", "father": "dead"}, "force": true}`))
@@ -1829,13 +1829,13 @@ var _ = Describe("Controller", func() {
  }
 ]
 }`, fakeServer1.URL, fakeServer2.URL)
-										applicationUriSplit := strings.Split(fakeServer1.URL, "http://")
-										applicationUri := applicationUriSplit[1]
+										applicationURISplit := strings.Split(fakeServer1.URL, "http://")
+										applicationURI := applicationURISplit[1]
 										vcapApplicationJSON := fmt.Sprintf(`{
   "application_uris": [
     "%s"
   ]
-}`, applicationUri)
+}`, applicationURI)
 										os.Setenv("VCAP_APPLICATION", vcapApplicationJSON)
 										os.Setenv("VCAP_SERVICES", vcapServicesJSON)
 										requestBody = bytes.NewReader([]byte(`{"possum_states":{"joey": "alive", "mother": "alive"}}`))
@@ -1880,13 +1880,13 @@ var _ = Describe("Controller", func() {
  }
 ]
 }`, fakeServer1.URL, fakeServer2.URL)
-										applicationUriSplit := strings.Split(fakeServer1.URL, "http://")
-										applicationUri := applicationUriSplit[1]
+										applicationURISplit := strings.Split(fakeServer1.URL, "http://")
+										applicationURI := applicationURISplit[1]
 										vcapApplicationJSON := fmt.Sprintf(`{
   "application_uris": [
     "%s"
   ]
-}`, applicationUri)
+}`, applicationURI)
 										os.Setenv("VCAP_APPLICATION", vcapApplicationJSON)
 										os.Setenv("VCAP_SERVICES", vcapServicesJSON)
 										requestBody = bytes.NewReader([]byte(`{"possum_states":{"joey": "alive", "mother": "alive"}, "force": true}`))
@@ -1933,13 +1933,13 @@ var _ = Describe("Controller", func() {
  }
 ]
 }`, fakeServer1.URL, fakeServer2.URL)
-										applicationUriSplit := strings.Split(fakeServer1.URL, "http://")
-										applicationUri := applicationUriSplit[1]
+										applicationURISplit := strings.Split(fakeServer1.URL, "http://")
+										applicationURI := applicationURISplit[1]
 										vcapApplicationJSON := fmt.Sprintf(`{
   "application_uris": [
     "%s"
   ]
-}`, applicationUri)
+}`, applicationURI)
 										os.Setenv("VCAP_APPLICATION", vcapApplicationJSON)
 										os.Setenv("VCAP_SERVICES", vcapServicesJSON)
 										requestBody = bytes.NewReader([]byte(`{"possum_states":{"joey": "alive", "mother": "alive"}, "force": true}`))
@@ -1984,13 +1984,13 @@ var _ = Describe("Controller", func() {
  }
 ]
 }`, fakeServer1.URL, fakeServer2.URL)
-										applicationUriSplit := strings.Split(fakeServer1.URL, "http://")
-										applicationUri := applicationUriSplit[1]
+										applicationURISplit := strings.Split(fakeServer1.URL, "http://")
+										applicationURI := applicationURISplit[1]
 										vcapApplicationJSON := fmt.Sprintf(`{
   "application_uris": [
     "%s"
   ]
-}`, applicationUri)
+}`, applicationURI)
 										os.Setenv("VCAP_APPLICATION", vcapApplicationJSON)
 										os.Setenv("VCAP_SERVICES", vcapServicesJSON)
 										requestBody = bytes.NewReader([]byte(`{"possum_states":{"joey": "alive", "mother": "alive"}, "force": true}`))
@@ -2034,13 +2034,13 @@ var _ = Describe("Controller", func() {
  }
 ]
 }`, fakeServer1.URL, fakeServer2.URL)
-									applicationUriSplit := strings.Split(fakeServer1.URL, "http://")
-									applicationUri := applicationUriSplit[1]
+									applicationURISplit := strings.Split(fakeServer1.URL, "http://")
+									applicationURI := applicationURISplit[1]
 									vcapApplicationJSON := fmt.Sprintf(`{
   "application_uris": [
     "%s"
   ]
-}`, applicationUri)
+}`, applicationURI)
 									os.Setenv("VCAP_APPLICATION", vcapApplicationJSON)
 									os.Setenv("VCAP_SERVICES", vcapServicesJSON)
 									requestBody = bytes.NewReader([]byte(`{"possum_states":{"joey": "alive", "mother": "alive"}}`))
@@ -2076,13 +2076,13 @@ var _ = Describe("Controller", func() {
  }
 ]
 }`, fakeServer1.URL, fakeServer2.URL)
-									applicationUriSplit := strings.Split(fakeServer1.URL, "http://")
-									applicationUri := applicationUriSplit[1]
+									applicationURISplit := strings.Split(fakeServer1.URL, "http://")
+									applicationURI := applicationURISplit[1]
 									vcapApplicationJSON := fmt.Sprintf(`{
   "application_uris": [
     "%s"
   ]
-}`, applicationUri)
+}`, applicationURI)
 									os.Setenv("VCAP_APPLICATION", vcapApplicationJSON)
 									os.Setenv("VCAP_SERVICES", vcapServicesJSON)
 									requestBody = bytes.NewReader([]byte(`{"possum_states":{"joey": "alive", "mother": "alive"}}`))
@@ -2122,13 +2122,13 @@ var _ = Describe("Controller", func() {
  }
 ]
 }`, fakeServer1.URL, fakeServer2.URL)
-								applicationUriSplit := strings.Split(fakeServer1.URL, "http://")
-								applicationUri := applicationUriSplit[1]
+								applicationURISplit := strings.Split(fakeServer1.URL, "http://")
+								applicationURI := applicationURISplit[1]
 								vcapApplicationJSON := fmt.Sprintf(`{
   "application_uris": [
     "%s"
   ]
-}`, applicationUri)
+}`, applicationURI)
 								os.Setenv("VCAP_APPLICATION", vcapApplicationJSON)
 								os.Setenv("VCAP_SERVICES", vcapServicesJSON)
 								requestBody = bytes.NewReader([]byte(`{"possum_states":{"joey": "alive", "mother": "alive"}}`))
@@ -2164,13 +2164,13 @@ var _ = Describe("Controller", func() {
  }
 ]
 }`)
-								applicationUriSplit := strings.Split(fakeServer1.URL, "http://")
-								applicationUri := applicationUriSplit[1]
+								applicationURISplit := strings.Split(fakeServer1.URL, "http://")
+								applicationURI := applicationURISplit[1]
 								vcapApplicationJSON := fmt.Sprintf(`{
   "application_uris": [
     "%s"
   ]
-}`, applicationUri)
+}`, applicationURI)
 								os.Setenv("VCAP_APPLICATION", vcapApplicationJSON)
 								os.Setenv("VCAP_SERVICES", vcapServicesJSON)
 								requestBody = bytes.NewReader([]byte(`{"possum_states":{"joey": "alive", "mother": "alive"}}`))
@@ -2206,13 +2206,13 @@ var _ = Describe("Controller", func() {
  }
 ]
 }`, fakeServer1.URL, fakeServer2.URL)
-								applicationUriSplit := strings.Split(fakeServer1.URL, "http://")
-								applicationUri := applicationUriSplit[1]
+								applicationURISplit := strings.Split(fakeServer1.URL, "http://")
+								applicationURI := applicationURISplit[1]
 								vcapApplicationJSON := fmt.Sprintf(`{
   "application_uris": [
     "%s"
   ]
-}`, applicationUri)
+}`, applicationURI)
 								os.Setenv("VCAP_APPLICATION", vcapApplicationJSON)
 								os.Setenv("VCAP_SERVICES", vcapServicesJSON)
 								requestBody = bytes.NewReader([]byte(`{"possum_states":{"joey": "alive", "mother": "alive"}}`))
@@ -2252,13 +2252,13 @@ var _ = Describe("Controller", func() {
  }
 ]
 }`, fakeServer1.URL, fakeServer2.URL)
-									applicationUriSplit := strings.Split(fakeServer1.URL, "http://")
-									applicationUri := applicationUriSplit[1]
+									applicationURISplit := strings.Split(fakeServer1.URL, "http://")
+									applicationURI := applicationURISplit[1]
 									vcapApplicationJSON := fmt.Sprintf(`{
   "application_uris": [
     "%s"
   ]
-}`, applicationUri)
+}`, applicationURI)
 									os.Setenv("VCAP_APPLICATION", vcapApplicationJSON)
 									os.Setenv("VCAP_SERVICES", vcapServicesJSON)
 									requestBody = bytes.NewReader([]byte(`{"possum_states":{"mother": "dead", "father": "dead"}}`))
@@ -2305,13 +2305,13 @@ var _ = Describe("Controller", func() {
  }
 ]
 }`, fakeServer1.URL, fakeServer2.URL)
-											applicationUriSplit := strings.Split(fakeServer1.URL, "http://")
-											applicationUri := applicationUriSplit[1]
+											applicationURISplit := strings.Split(fakeServer1.URL, "http://")
+											applicationURI := applicationURISplit[1]
 											vcapApplicationJSON := fmt.Sprintf(`{
   "application_uris": [
     "%s"
   ]
-}`, applicationUri)
+}`, applicationURI)
 											os.Setenv("VCAP_APPLICATION", vcapApplicationJSON)
 											os.Setenv("VCAP_SERVICES", vcapServicesJSON)
 											requestBody = bytes.NewReader([]byte(`{"possum_states":{"joey": "alive", "mother": "alive"}}`))
@@ -2356,13 +2356,13 @@ var _ = Describe("Controller", func() {
  }
 ]
 }`, fakeServer1.URL, fakeServer2.URL)
-											applicationUriSplit := strings.Split(fakeServer1.URL, "http://")
-											applicationUri := applicationUriSplit[1]
+											applicationURISplit := strings.Split(fakeServer1.URL, "http://")
+											applicationURI := applicationURISplit[1]
 											vcapApplicationJSON := fmt.Sprintf(`{
   "application_uris": [
     "%s"
   ]
-}`, applicationUri)
+}`, applicationURI)
 											os.Setenv("VCAP_APPLICATION", vcapApplicationJSON)
 											os.Setenv("VCAP_SERVICES", vcapServicesJSON)
 											requestBody = bytes.NewReader([]byte(`{"possum_states":{"joey": "alive", "mother": "alive"}}`))
@@ -2409,13 +2409,13 @@ var _ = Describe("Controller", func() {
  }
 ]
 }`, fakeServer1.URL, fakeServer2.URL)
-											applicationUriSplit := strings.Split(fakeServer1.URL, "http://")
-											applicationUri := applicationUriSplit[1]
+											applicationURISplit := strings.Split(fakeServer1.URL, "http://")
+											applicationURI := applicationURISplit[1]
 											vcapApplicationJSON := fmt.Sprintf(`{
   "application_uris": [
     "%s"
   ]
-}`, applicationUri)
+}`, applicationURI)
 											os.Setenv("VCAP_APPLICATION", vcapApplicationJSON)
 											os.Setenv("VCAP_SERVICES", vcapServicesJSON)
 											requestBody = bytes.NewReader([]byte(`{"possum_states":{"joey": "alive", "mother": "alive"}}`))
@@ -2460,13 +2460,13 @@ var _ = Describe("Controller", func() {
  }
 ]
 }`, fakeServer1.URL, fakeServer2.URL)
-											applicationUriSplit := strings.Split(fakeServer1.URL, "http://")
-											applicationUri := applicationUriSplit[1]
+											applicationURISplit := strings.Split(fakeServer1.URL, "http://")
+											applicationURI := applicationURISplit[1]
 											vcapApplicationJSON := fmt.Sprintf(`{
   "application_uris": [
     "%s"
   ]
-}`, applicationUri)
+}`, applicationURI)
 											os.Setenv("VCAP_APPLICATION", vcapApplicationJSON)
 											os.Setenv("VCAP_SERVICES", vcapServicesJSON)
 											requestBody = bytes.NewReader([]byte(`{"possum_states":{"joey": "alive", "mother": "alive"}}`))
