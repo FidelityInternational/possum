@@ -1,0 +1,6 @@
+coverage.txt
+manifest.yml
+manifest-green.yml
+cacert.pem
+*.coverprofile
+cover.html
