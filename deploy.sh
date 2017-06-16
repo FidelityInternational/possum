@@ -17,8 +17,8 @@ applications:
   - possum-db
   - possum
   env:
-    GOVERSION: 1.8
-    GOPACKAGENAME: possum
+    GOVERSION: go1.8
+    GOPACKAGENAME: github.com/FidelityInternational/possum
 EOF
 
 if [ -n "${CORS_ALLOWED}" ]; then
@@ -39,8 +39,8 @@ applications:
   - possum-db
   - possum
   env:
-    GOVERSION: 1.8
-    GOPACKAGENAME: possum
+    GOVERSION: go1.8
+    GOPACKAGENAME: github.com/FidelityInternational/possum
 EOF
 if [ -n "$CORS_ALLOWED" ]; then
   echo "  env:" >> manifest.yml
