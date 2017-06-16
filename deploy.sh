@@ -35,6 +35,9 @@ applications:
   services:
   - possum-db
   - possum
+  env:
+    GOVERSION: 1.8
+    GOPACKAGENAME: possum
 EOF
 if [ -n "$CORS_ALLOWED" ]; then
   echo "  env:" >> manifest.yml
