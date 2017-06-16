@@ -729,19 +729,16 @@ func (rows *textRows) readRow(dest []driver.Value) error {
 func (mc *mysqlConn) readUntilEOF() error {
 	for {
 		data, err := mc.readPacket()
-		if err != nil {
-			return err
+
+		// No Err and no EOF Packet
+		if err == nil && data[0] != iEOF {
+			continue
+		}
+		if err == nil && data[0] == iEOF && len(data) == 5 {
+			mc.status = readStatus(data[3:])
 		}
 
-		switch data[0] {
-		case iERR:
-			return mc.handleErrorPacket(data)
-		case iEOF:
-			if len(data) == 5 {
-				mc.status = readStatus(data[3:])
-			}
-			return nil
-		}
+		return err // Err or EOF
 	}
 }
 
