@@ -22,7 +22,6 @@ applications:
 EOF
 
 if [ -n "${CORS_ALLOWED}" ]; then
-  echo "  env:" >> manifest-green.yml
   echo "    CORS_ALLOWED: '${CORS_ALLOWED}'" >> manifest-green.yml
 fi
 
@@ -43,7 +42,6 @@ applications:
     GOPACKAGENAME: github.com/FidelityInternational/possum
 EOF
 if [ -n "$CORS_ALLOWED" ]; then
-  echo "  env:" >> manifest.yml
   echo "    CORS_ALLOWED: '${CORS_ALLOWED}'" >> manifest.yml
 fi
 
