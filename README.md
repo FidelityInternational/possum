@@ -17,7 +17,7 @@ IMPORTANT: Possum supports setting of the Cross-Origin-Resource-Scripting (CORS)
 ### Deploy
 
 What the script does:
-* Creates an Org and Space to deploy possum too
+* Creates an Org and Space to deploy possum to
 * Sets up required user-provided-services - these are configuration only!
 * Deploys the possum application
 * Zero downtime upgrades possum if it is already deployed
