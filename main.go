@@ -3,9 +3,10 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	webs "github.com/FidelityInternational/possum/web_server"
 	"net/http"
 	"os"
+
+	webs "github.com/FidelityInternational/possum/web_server"
 )
 
 func main() {

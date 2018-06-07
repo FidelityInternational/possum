@@ -8,13 +8,14 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/FidelityInternational/possum/utils"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"reflect"
 	"regexp"
 	"strings"
+
+	"github.com/FidelityInternational/possum/utils"
 )
 
 const (

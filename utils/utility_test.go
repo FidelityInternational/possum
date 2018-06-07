@@ -2,11 +2,12 @@ package utils_test
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/FidelityInternational/possum/utils"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"os"
 )
 
 var _ = Describe("GetMyApplicationURIs", func() {

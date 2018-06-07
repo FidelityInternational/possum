@@ -3,8 +3,9 @@ package utils
 import (
 	"database/sql"
 	"fmt"
-	"github.com/cloudfoundry-community/go-cfenv"
 	"reflect"
+
+	"github.com/cloudfoundry-community/go-cfenv"
 )
 
 // GetDBConnectionDetails - Loads database connection details from UPS "possum-db"
