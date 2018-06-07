@@ -167,7 +167,7 @@ var _ = Describe("Server", func() {
 
 				It("returns an error", func() {
 					_, err := webs.CreateServer(mockDBConn, mockCreateController)
-					Ω(err).Should(MatchError("invalid character '\\n' in string literal"))
+					Ω(err).Should(MatchError("Can't get DB details from CF env. Check DB binding: invalid character '\\n' in string literal"))
 				})
 			})
 		})

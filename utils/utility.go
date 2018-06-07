@@ -6,18 +6,20 @@ import (
 	"reflect"
 
 	"github.com/cloudfoundry-community/go-cfenv"
+	log "github.com/sirupsen/logrus"
 )
 
 // GetDBConnectionDetails - Loads database connection details from UPS "possum-db"
 func GetDBConnectionDetails() (string, error) {
 	appEnv, err := cfenv.Current()
 	if err != nil {
-		return "", err
+		log.WithFields(log.Fields{"package": "utils", "function": "GetDBConnectionDetails"}).Debugf("Can't get DB details from CF env: %s", err)
+		return "", fmt.Errorf("Can't get DB details from CF env. Check DB binding: %s", err)
 	}
 
 	service, err := appEnv.Services.WithName("possum-db")
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("Can't get DB details from CF env. Check DB binding: %s", err)
 	}
 
 	hostname := service.Credentials["host"]
@@ -57,31 +59,35 @@ func SetupStateDB(db *sql.DB) error {
 	)`)
 
 	if err != nil {
-		fmt.Println(err)
+		log.WithFields(log.Fields{"package": "utils", "function": "SetupStateDB"}).Debugf("Can't create table: %s", err)
 		return err
 	}
 
 	passel, err := GetPassel()
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 
 	for _, possum := range passel {
 		var possumdb, state string
+		log.WithFields(log.Fields{"package": "utils", "function": "SetupStateDB", "possum": possum}).Debugf("Checking initail possum state")
 		row := db.QueryRow("SELECT * FROM state WHERE possum=?", possum)
 		err := row.Scan(&possumdb, &state)
 		if err != nil {
+			log.WithFields(log.Fields{"package": "utils", "function": "SetupStateDB"}).Debugf("Error getting row from DB %s", err.Error())
 			if err.Error() == "sql: no rows in result set" {
+				log.WithFields(log.Fields{"package": "utils", "function": "SetupStateDB", "possum": possum}).Debugf("Inserting alive state into DB")
 				_, insertErr := db.Exec("INSERT INTO state VALUES (?, ?)", possum, "alive")
 				if insertErr != nil {
-					fmt.Println(insertErr)
+					log.WithFields(log.Fields{"package": "utils", "function": "SetupStateDB"}).Debugf("Error inserting into DB %s", insertErr.Error())
 					return insertErr
 				}
 			} else {
-				fmt.Println(err)
+				log.WithFields(log.Fields{"package": "utils", "function": "SetupStateDB"}).Debug(err.Error())
 				return err
 			}
+		} else {
+			log.WithFields(log.Fields{"package": "utils", "function": "SetupStateDB", "possum": possum, "state": state}).Debugf("Retrived state")
 		}
 	}
 	return nil
@@ -93,11 +99,13 @@ func GetPassel() ([]string, error) {
 
 	appEnv, err := cfenv.Current()
 	if err != nil {
+		log.WithFields(log.Fields{"package": "utils", "function": "GetPassel"}).Debugf("Can't get CF env variables: %s", err)
 		return []string{}, err
 	}
 
 	service, err := appEnv.Services.WithName("possum")
 	if err != nil {
+		log.WithFields(log.Fields{"package": "utils", "function": "GetPassel"}).Debugf("Can't get service with a name \"possum\": %s", err)
 		return []string{}, err
 	}
 
@@ -119,6 +127,7 @@ func GetState(db *sql.DB, possum string) (string, error) {
 	row := db.QueryRow("SELECT * FROM state WHERE possum=?", possum)
 	err := row.Scan(&possumdb, &state)
 	if err != nil {
+		log.WithFields(log.Fields{"package": "utils", "function": "GetState", "dbquery": "SELECT * FROM state WHERE possum=" + possum}).Debugf("Can't get rows from DB: %s", err)
 		if err.Error() == "sql: no rows in result set" {
 			return "", fmt.Errorf("Could not find possum %s in db", possum)
 		}
@@ -130,6 +139,7 @@ func GetState(db *sql.DB, possum string) (string, error) {
 // GetPasselState - returns current state for the given passel
 func GetPasselState(db *sql.DB, passel []string) (map[string]string, error) {
 	if len(passel) == 0 {
+		log.WithFields(log.Fields{"package": "utils", "function": "GetPasselState"}).Debugf("Passel had 0 members")
 		return nil, fmt.Errorf("Passel had 0 members")
 	}
 	passelState := make(map[string]string)
@@ -138,6 +148,7 @@ func GetPasselState(db *sql.DB, passel []string) (map[string]string, error) {
 		row := db.QueryRow("SELECT * FROM state WHERE possum=?", possum)
 		err := row.Scan(&possumdb, &state)
 		if err != nil {
+			log.WithFields(log.Fields{"package": "utils", "function": "GetPasselState", "dbquery": "SELECT * FROM state WHERE possum=" + possum}).Debugf("Can't get rows from DB: %s", err)
 			if err.Error() == "sql: no rows in result set" {
 				return nil, fmt.Errorf("Could not find possum %s in db", possum)
 			}
@@ -155,6 +166,7 @@ func WriteState(db *sql.DB, desiredPossum string, desiredState string) error {
 	}
 	_, err := db.Exec("UPDATE state SET state=? WHERE possum=?", desiredState, desiredPossum)
 	if err != nil {
+		log.WithFields(log.Fields{"package": "utils", "function": "WriteState", "dbquery": "UPDATE state SET state=" + desiredState + " WHERE possum=" + desiredPossum}).Debugf("Can't update DB: %s", err)
 		return err
 	}
 	return nil
@@ -164,17 +176,20 @@ func WriteState(db *sql.DB, desiredPossum string, desiredState string) error {
 func GetUsername() (string, error) {
 	appEnv, err := cfenv.Current()
 	if err != nil {
+		log.WithFields(log.Fields{"package": "utils", "function": "GetUsername"}).Debugf("Can't get CF env variables: %s", err)
 		return "", err
 	}
 
 	service, err := appEnv.Services.WithName("possum")
 	if err != nil {
+		log.WithFields(log.Fields{"package": "utils", "function": "GetUsername"}).Debugf("Can't get service with a name \"possum\": %s", err)
 		return "", err
 	}
 
 	username := service.Credentials["username"]
 
 	if username == nil {
+		log.WithFields(log.Fields{"package": "utils", "function": "GetUsername"}).Debugf("Username empty")
 		return "", nil
 	}
 
@@ -185,17 +200,20 @@ func GetUsername() (string, error) {
 func GetPassword() (string, error) {
 	appEnv, err := cfenv.Current()
 	if err != nil {
+		log.WithFields(log.Fields{"package": "utils", "function": "GetPassword"}).Debugf("Can't get CF env variables: %s", err)
 		return "", err
 	}
 
 	service, err := appEnv.Services.WithName("possum")
 	if err != nil {
+		log.WithFields(log.Fields{"package": "utils", "function": "GetPassword"}).Debugf("Can't get service with a name \"possum\": %s", err)
 		return "", err
 	}
 
 	password := service.Credentials["password"]
 
 	if password == nil {
+		log.WithFields(log.Fields{"package": "utils", "function": "GetPassword"}).Debugf("Password empty")
 		return "", nil
 	}
 
