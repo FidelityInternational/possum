@@ -2,11 +2,12 @@ package utils_test
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/FidelityInternational/possum/utils"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"os"
 )
 
 var _ = Describe("GetMyApplicationURIs", func() {
@@ -121,7 +122,7 @@ var _ = Describe("GetDBConnectionDetails", func() {
 
 		It("returns an error", func() {
 			_, err := utils.GetDBConnectionDetails()
-			Ω(err).Should(MatchError("no service with name possum-db"))
+			Ω(err).Should(MatchError("Can't get DB details from CF env. Check DB binding: no service with name possum-db"))
 		})
 	})
 
@@ -209,7 +210,7 @@ var _ = Describe("GetDBConnectionDetails", func() {
 
 			It("Returns an error", func() {
 				_, err := utils.GetDBConnectionDetails()
-				Ω(err).Should(MatchError("invalid character '\\n' in string literal"))
+				Ω(err).Should(MatchError("Can't get DB details from CF env. Check DB binding: invalid character '\\n' in string literal"))
 			})
 		})
 	})
@@ -334,7 +335,7 @@ var _ = Describe("#SetupStateDB", func() {
 						mock.ExpectExec("CREATE TABLE").WillReturnResult(sqlmock.NewResult(1, 1))
 						mock.ExpectQuery("SELECT (.+) FROM state WHERE possum=").WillReturnRows(rows)
 						mock.ExpectExec("INSERT INTO state").WithArgs("mother").WillReturnResult(sqlmock.NewResult(1, 1))
-						Ω(utils.SetupStateDB(db)).Should(MatchError("exec query 'INSERT INTO state VALUES (?, ?)', arguments do not match: expected 1, but got 2 arguments"))
+						Ω(utils.SetupStateDB(db)).Should(MatchError("ExecQuery 'INSERT INTO state VALUES (?, ?)', arguments do not match: expected 1, but got 2 arguments"))
 					})
 				})
 

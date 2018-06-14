@@ -8,13 +8,15 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/FidelityInternational/possum/utils"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"reflect"
 	"regexp"
 	"strings"
+
+	"github.com/FidelityInternational/possum/utils"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -48,17 +50,21 @@ func (c *Controller) GetState(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", loadCORSAllowed())
 	myURIs, err := utils.GetMyApplicationURIs()
 	if standardError(err, w) {
+		log.WithFields(log.Fields{"package": "webServer", "function": "GetState"}).Debugf("Can't get application URIs: %s", err.Error())
 		return
 	}
 	if len(myURIs) == 0 {
 		customError(w, http.StatusGone, "No uris were configured")
+		log.WithFields(log.Fields{"package": "webServer", "function": "GetState"}).Debugf("No uris were configured: %v", myURIs)
 		return
 	}
 	passel, err := utils.GetPassel()
 	if standardError(err, w) {
+		log.WithFields(log.Fields{"package": "webServer", "function": "GetState"}).Debugf("Can't get passel: %s", err.Error())
 		return
 	}
 	if len(passel) == 0 {
+		log.WithFields(log.Fields{"package": "webServer", "function": "GetState"}).Debugln("Passel had 0 members")
 		customError(w, http.StatusGone, "Passel had 0 members")
 		return
 	}
@@ -67,6 +73,7 @@ func (c *Controller) GetState(w http.ResponseWriter, r *http.Request) {
 			if uriPossumMatch(uri, possum) {
 				state, err := utils.GetState(c.DB, possum)
 				if standardError(err, w) {
+					log.WithFields(log.Fields{"package": "webServer", "function": "GetState"}).Debugf("%v", err)
 					return
 				}
 				w.WriteHeader(http.StatusOK)
@@ -75,6 +82,7 @@ func (c *Controller) GetState(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
+	log.WithFields(log.Fields{"package": "webServer", "function": "GetState"}).Debugln("Could not match any possum in db")
 	w.WriteHeader(http.StatusGone)
 	fmt.Fprintf(w, `{"error": "Could not match any possum in db"}`)
 }
@@ -86,10 +94,12 @@ func (c *Controller) GetPasselState(w http.ResponseWriter, r *http.Request) {
 
 	passel, err := utils.GetPassel()
 	if standardError(err, w) {
+		log.WithFields(log.Fields{"package": "webServer", "function": "GetPassel"}).Debugf("Can't get passel: %s", err.Error())
 		return
 	}
 	possumStates, err := utils.GetPasselState(c.DB, passel)
 	if standardError(err, w) {
+		log.WithFields(log.Fields{"package": "webServer", "function": "GetPassel"}).Debug(err.Error())
 		return
 	}
 	w.WriteHeader(http.StatusOK)
@@ -104,10 +114,12 @@ func (c *Controller) GetPasselStateConsistency(w http.ResponseWriter, r *http.Re
 
 	passel, err := getPassel()
 	if standardError(err, w) {
+		log.WithFields(log.Fields{"package": "webServer", "function": "GetPasselStateConsistency"}).Debugf("Can't get passel: %s", err.Error())
 		return
 	}
 	passelStates, err := gatherStates(c.HTTPClient, passel)
 	if standardError(err, w) {
+		log.WithFields(log.Fields{"package": "webServer", "function": "GetPasselStateConsistency"}).Debug(err.Error())
 		return
 	}
 	consistent := arePasselStatesConsistent(passelStates)
@@ -129,6 +141,7 @@ func (c *Controller) SetState(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	myURIs, err := utils.GetMyApplicationURIs()
 	if standardError(err, w) {
+		log.WithFields(log.Fields{"package": "webServer", "function": "SetState"}).Debugf("Can't get application URIs: %s, Request: ", err.Error())
 		return
 	}
 	if len(myURIs) == 0 {
@@ -137,6 +150,7 @@ func (c *Controller) SetState(w http.ResponseWriter, r *http.Request) {
 	}
 	passel, err := utils.GetPassel()
 	if standardError(err, w) {
+		log.WithFields(log.Fields{"package": "webServer", "function": "SetState"}).Debugf("Can't get passel: %s", err.Error())
 		return
 	}
 	if len(passel) == 0 {
@@ -148,6 +162,7 @@ func (c *Controller) SetState(w http.ResponseWriter, r *http.Request) {
 			if uriPossumMatch(uri, possum) {
 				desiredPasselState, err := getDesiredPasselState(r)
 				if standardError(err, w) {
+					log.WithFields(log.Fields{"package": "webServer", "function": "SetState"}).Debug(err.Error())
 					return
 				}
 				desiredPossumFound, desiredPossum := desiredPossumInPassel(desiredPasselState, passel)
@@ -157,6 +172,7 @@ func (c *Controller) SetState(w http.ResponseWriter, r *http.Request) {
 				}
 				passelState, err := getPasselState(c.HTTPClient, possum)
 				if standardError(err, w) {
+					log.WithFields(log.Fields{"package": "webServer", "function": "SetState"}).Debugf("Can't get passel: %s", err.Error())
 					return
 				}
 				if !isAtLeastOnePossumAlive(desiredPasselState, passelState) {
@@ -171,6 +187,7 @@ func (c *Controller) SetState(w http.ResponseWriter, r *http.Request) {
 				}
 				afterWritePasselState, err := getPasselState(c.HTTPClient, possum)
 				if standardError(err, w) {
+					log.WithFields(log.Fields{"package": "webServer", "function": "SetState"}).Debug(err.Error())
 					return
 				}
 				completeDesiredState := updateStateToDesired(desiredPasselState, afterWritePasselState)
@@ -179,6 +196,7 @@ func (c *Controller) SetState(w http.ResponseWriter, r *http.Request) {
 				if !configuredCorrectly {
 					completeDesiredStateBytes, _ := json.Marshal(completeDesiredState)
 					customError(w, http.StatusInternalServerError, fmt.Sprintf("State should have been: %s but was %s", string(completeDesiredStateBytes), string(afterWritePasselStateBytes)))
+					log.WithFields(log.Fields{"package": "webServer", "function": "SetState"}).Debug("State should have been: %s but was %s", string(completeDesiredStateBytes), string(afterWritePasselStateBytes))
 					return
 				}
 				w.WriteHeader(http.StatusAccepted)
@@ -201,15 +219,18 @@ func (c *Controller) SetPasselState(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	passel, err := getPassel()
 	if standardError(err, w) {
+		log.WithFields(log.Fields{"package": "webServer", "function": "SetPasselState"}).Debugf("Can't get passel: %s", err.Error())
 		return
 	}
 	desiredPossumStates, err := getDesiredPossumStates(r)
 	if standardError(err, w) {
+		log.WithFields(log.Fields{"package": "webServer", "function": "SetPasselState"}).Debug(err.Error())
 		return
 	}
 	desiredPasselState := desiredPossumStates.PossumStates
 	passelStates, err := gatherStates(c.HTTPClient, passel)
 	if standardError(err, w) {
+		log.WithFields(log.Fields{"package": "webServer", "function": "SetPasselState"}).Debug(err.Error())
 		return
 	}
 	if !desiredPossumStates.Force {
@@ -225,6 +246,7 @@ func (c *Controller) SetPasselState(w http.ResponseWriter, r *http.Request) {
 	desiredPasselStateBytes, _ := json.Marshal(desiredPasselState)
 	afterWritePasselStates, err := setStates(c.HTTPClient, passel, desiredPasselStateBytes)
 	if standardError(err, w) {
+		log.WithFields(log.Fields{"package": "webServer", "function": "SetPasselState"}).Debug(err.Error())
 		return
 	}
 	afterWriteConsistent := arePasselStatesConsistent(afterWritePasselStates)
@@ -276,10 +298,12 @@ func getDesiredPasselState(r *http.Request) (map[string]string, error) {
 	var desiredPasselState map[string]string
 	data, err := ioutil.ReadAll(r.Body)
 	if err != nil {
+		log.WithFields(log.Fields{"package": "webServer", "function": "getDesiredPasselState"}).Debugf("Couldn't read body of request :%s", err)
 		return nil, err
 	}
 	err = json.Unmarshal(data, &desiredPasselState)
 	if err != nil {
+		log.WithFields(log.Fields{"package": "webServer", "function": "getDesiredPasselState"}).Debugf("Couldn't unmarshal JSON :%s", err)
 		return nil, err
 	}
 	return desiredPasselState, nil
@@ -289,10 +313,12 @@ func getDesiredPossumStates(r *http.Request) (PossumStates, error) {
 	var desiredPossumStates PossumStates
 	data, err := ioutil.ReadAll(r.Body)
 	if err != nil {
+		log.WithFields(log.Fields{"package": "webServer", "function": "getDesiredPossumStates"}).Debugf("Couldn't read body of request :%s", err)
 		return PossumStates{}, err
 	}
 	err = json.Unmarshal(data, &desiredPossumStates)
 	if err != nil {
+		log.WithFields(log.Fields{"package": "webServer", "function": "getDesiredPossumStates"}).Debugf("Couldn't unmarshal JSON :%s", err)
 		return PossumStates{}, err
 	}
 	return desiredPossumStates, nil
@@ -356,18 +382,22 @@ func getPasselState(httpClient *http.Client, possum string) (map[string]string, 
 	var possumStates PossumStates
 	resp, err := httpClient.Get(fmt.Sprintf("%s/v1/passel_state", possum))
 	if err != nil {
+		log.WithFields(log.Fields{"package": "webServer", "function": "getPasselState", "URI": fmt.Sprintf("%s/v1/passel_state", possum)}).Debugf("Couldn't complete API request :%s", err)
 		return nil, err
 	}
 	defer resp.Body.Close()
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		log.WithFields(log.Fields{"package": "webServer", "function": "getPasselState"}).Debugf("Couldn't read body of request :%s", err)
 		return nil, err
 	}
 	err = json.Unmarshal(data, &possumStates)
 	if err != nil {
+		log.WithFields(log.Fields{"package": "webServer", "function": "getPasselState"}).Debugf("Couldn't unmarshal JSON :%s", err)
 		return nil, err
 	}
 	if possumStates.Error != "" {
+		log.WithFields(log.Fields{"package": "webServer", "function": "getPasselState"}).Debug(possumStates.Error)
 		return nil, fmt.Errorf(possumStates.Error)
 	}
 	return possumStates.PossumStates, nil
@@ -400,6 +430,7 @@ func setPasselState(httpClient *http.Client, possum string, passelState []byte) 
 	var possumStates PossumStates
 	req, err := http.NewRequest("POST", fmt.Sprintf("%s/v1/state", possum), bytes.NewReader(passelState))
 	if err != nil {
+		log.WithFields(log.Fields{"package": "webServer", "function": "setPasselState", "URI": fmt.Sprintf("%s/v1/passel_state", possum)}).Debugf("Couldn't set possum state :%s", err)
 		return nil, err
 	}
 	username, err := utils.GetUsername()
@@ -414,18 +445,22 @@ func setPasselState(httpClient *http.Client, possum string, passelState []byte) 
 	req.SetBasicAuth(username, password)
 	resp, err := httpClient.Do(req)
 	if err != nil {
+		log.WithFields(log.Fields{"package": "webServer", "function": "setPasselState"}).Debugf("Couldn't authenticate :%s", err)
 		return nil, err
 	}
 	defer resp.Body.Close()
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		log.WithFields(log.Fields{"package": "webServer", "function": "setPasselState"}).Debugf("Couldn't read body of request :%s", err)
 		return nil, err
 	}
 	err = json.Unmarshal(data, &possumStates)
 	if err != nil {
+		log.WithFields(log.Fields{"package": "webServer", "function": "setPasselState"}).Debugf("Couldn't unmarshal JSON :%s", err)
 		return nil, err
 	}
 	if possumStates.Error != "" {
+		log.WithFields(log.Fields{"package": "webServer", "function": "setPasselState"}).Debug(possumStates.Error)
 		return nil, fmt.Errorf(possumStates.Error)
 	}
 	return possumStates.PossumStates, nil
@@ -461,13 +496,13 @@ func createHTTPClient() *http.Client {
 func checkAuth(w http.ResponseWriter, r *http.Request) bool {
 	s := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
 	if len(s) != 2 {
-		fmt.Println(err)
+		log.WithFields(log.Fields{"package": "webServer", "function": "checkAuth"}).Debugf("No authorisation header found ")
 		return false
 	}
 
 	b, err := base64.StdEncoding.DecodeString(s[1])
 	if err != nil {
-		fmt.Println(err)
+		log.WithFields(log.Fields{"package": "webServer", "function": "checkAuth"}).Debugf("Cannot decode string :%s ", err)
 		return false
 	}
 

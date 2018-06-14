@@ -4,16 +4,17 @@ import (
 	"bytes"
 	"database/sql"
 	"fmt"
-	"github.com/DATA-DOG/go-sqlmock"
-	webs "github.com/FidelityInternational/possum/web_server"
-	"github.com/gorilla/mux"
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"strings"
+
+	"github.com/DATA-DOG/go-sqlmock"
+	webs "github.com/FidelityInternational/possum/web_server"
+	"github.com/gorilla/mux"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
 var (
@@ -166,7 +167,7 @@ var _ = Describe("Server", func() {
 
 				It("returns an error", func() {
 					_, err := webs.CreateServer(mockDBConn, mockCreateController)
-					Ω(err).Should(MatchError("invalid character '\\n' in string literal"))
+					Ω(err).Should(MatchError("Can't get DB details from CF env. Check DB binding: invalid character '\\n' in string literal"))
 				})
 			})
 		})
@@ -2050,7 +2051,7 @@ var _ = Describe("Controller", func() {
 
 								It("returns an error", func() {
 									Ω(mockRecorder.Code).Should(Equal(500))
-									Ω(mockRecorder.Body.String()).Should(MatchRegexp(`{"error": "Get http://.+/v1/passel_state: dial tcp .+: getsockopt: connection refused"}`))
+									Ω(mockRecorder.Body.String()).Should(MatchRegexp(`{"error": "Get http://.+/v1/passel_state: dial tcp .+: connect: connection refused"}`))
 								})
 							})
 

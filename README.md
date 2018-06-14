@@ -51,6 +51,7 @@ Required Variables:
 | DB_PASSWORD          | Optional | The password for DB_USERNAME. Required for `cups` provided database.                                                                                                                                                   |
 | GLOBAL_DOMAIN        | Optional | If you have a single domain that can route to multiple CF foundations you may want to map the same URI to multiple instances in a possum cluster. Note: This domain should never be added to the PASSEL variable above |
 | CORS_ALLOWED         | Optional | Defaults to '*' if no more specific match supplied as ENV variable                 |
+| DEBUG                | Optional | No Default. If set to `true` it will enable debug logging|
 
 
 Example deploy with user provided database:

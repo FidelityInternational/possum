@@ -2,11 +2,12 @@ package webServer
 
 import (
 	"database/sql"
-	"fmt"
+
 	"github.com/FidelityInternational/possum/utils"
 	"github.com/gorilla/mux"
 	// sql driver
 	_ "github.com/go-sql-driver/mysql"
+	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -30,19 +31,18 @@ type ControllerCreator func(db *sql.DB) *Controller
 func CreateServer(dbConnFunc DBConn, controllerCreator ControllerCreator) (*Server, error) {
 	dbConnectionString, err = utils.GetDBConnectionDetails()
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 
 	db, err = dbConnFunc("mysql", dbConnectionString)
 	if err != nil {
-		fmt.Println(err)
+		log.WithFields(log.Fields{"package": "webServer", "function": "CreateServer"}).Debugf("Can't open DB connection: %s", err)
 		return nil, err
 	}
 
 	err = utils.SetupStateDB(db)
 	if err != nil {
-		fmt.Println(err)
+		log.WithFields(log.Fields{"package": "webServer", "function": "CreateServer"}).Debugf("Can't set up state DB: %s", err)
 		return nil, err
 	}
 

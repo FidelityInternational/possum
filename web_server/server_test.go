@@ -1,10 +1,11 @@
 package webServer_test
 
 import (
-	"github.com/go-martini/martini"
-	"github.com/martini-contrib/render"
 	"net/http"
 	"net/http/httptest"
+
+	"github.com/go-martini/martini"
+	"github.com/martini-contrib/render"
 )
 
 var (
