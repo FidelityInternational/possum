@@ -2,69 +2,79 @@
 
 
 [[projects]]
+  digest = "1:04aea75705cb453e24bf8c1506a24a5a9036537dbc61ddf71d20900d6c7c3ab9"
   name = "github.com/DATA-DOG/go-sqlmock"
   packages = ["."]
+  pruneopts = "UT"
   revision = "d76b18b42f285b792bf985118980ce9eacea9d10"
   version = "v1.3.0"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/FidelityInternational/possum"
-  packages = [
-    "utils",
-    "web_server"
-  ]
-  revision = "49c0b05474154793b4e52e1cf88f27be6f454462"
-
-[[projects]]
+  digest = "1:d689318918dac8435731a16f090349f48f3758a3dbe5f967e913185bf264abaf"
   name = "github.com/cloudfoundry-community/go-cfenv"
   packages = ["."]
+  pruneopts = "UT"
   revision = "f920e9562d5f951cbf11785728f67258c38a10d0"
   version = "v1.17.0"
 
 [[projects]]
+  digest = "1:63bd62f5b57c55f0e07c9f8a76d841c7fa74905cc3cb6b8a55e923450f4bee81"
   name = "github.com/codegangsta/inject"
   packages = ["."]
+  pruneopts = "UT"
   revision = "37d7f8432a3e684eef9b2edece76bdfa6ac85b39"
   version = "v1.0-rc1"
 
 [[projects]]
+  digest = "1:275990a68fda901ee42e120ee4c819118deefbfa6bc5562df4d0e9337b4a30e4"
   name = "github.com/go-martini/martini"
   packages = ["."]
+  pruneopts = "UT"
   revision = "49411a5b646861ad29a6ddd5351717a0a9c49b94"
   version = "v1.0"
 
 [[projects]]
+  digest = "1:adea5a94903eb4384abef30f3d878dc9ff6b6b5b0722da25b82e5169216dfb61"
   name = "github.com/go-sql-driver/mysql"
   packages = ["."]
+  pruneopts = "UT"
   revision = "d523deb1b23d913de5bdada721a6071e71283618"
   version = "v1.4.0"
 
 [[projects]]
+  digest = "1:c79fb010be38a59d657c48c6ba1d003a8aa651fa56b579d959d74573b7dff8e1"
   name = "github.com/gorilla/context"
   packages = ["."]
+  pruneopts = "UT"
   revision = "08b5f424b9271eedf6f9f0ce86cb9396ed337a42"
   version = "v1.1.1"
 
 [[projects]]
+  digest = "1:e73f5b0152105f18bc131fba127d9949305c8693f8a762588a82a48f61756f5f"
   name = "github.com/gorilla/mux"
   packages = ["."]
+  pruneopts = "UT"
   revision = "e3702bed27f0d39777b0b37b664b6280e8ef8fbf"
   version = "v1.6.2"
 
 [[projects]]
   branch = "master"
+  digest = "1:9b774ba49d1ba0fcbd64c39d1d389ca045633453b373bc034977d936965dfa87"
   name = "github.com/martini-contrib/render"
   packages = ["."]
+  pruneopts = "UT"
   revision = "ec18f8345a1181146728238980606fb1d6f40e8c"
 
 [[projects]]
   branch = "master"
+  digest = "1:e730597b38a4d56e2361e0b6236cb800e52c73cace2ff91396f4ff35792ddfa7"
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
+  pruneopts = "UT"
   revision = "bb74f1db0675b241733089d5a1faa5dd8b0ef57b"
 
 [[projects]]
+  digest = "1:44aed0089693bd52eb5e76a916ebe103cdf406e3d38c4c42a0ca99ee8c27bbc5"
   name = "github.com/onsi/ginkgo"
   packages = [
     ".",
@@ -84,12 +94,14 @@
     "reporters/stenographer",
     "reporters/stenographer/support/go-colorable",
     "reporters/stenographer/support/go-isatty",
-    "types"
+    "types",
   ]
+  pruneopts = "UT"
   revision = "fa5fabab2a1bfbd924faf4c067d07ae414e2aedf"
   version = "v1.5.0"
 
 [[projects]]
+  digest = "1:1fca381aabf2bfa7efbb8704a474c0098f07db1d1031c9803f2bbf27ea167165"
   name = "github.com/onsi/gomega"
   packages = [
     ".",
@@ -103,49 +115,61 @@
     "matchers/support/goraph/edge",
     "matchers/support/goraph/node",
     "matchers/support/goraph/util",
-    "types"
+    "types",
   ]
+  pruneopts = "UT"
   revision = "62bff4df71bdbc266561a0caee19f0594b17c240"
   version = "v1.4.0"
 
 [[projects]]
   branch = "master"
+  digest = "1:df63a8ddf6fd32f2cdf09db1ada151c8a27f5fe2516ee977b72d6a0707e94910"
   name = "github.com/oxtoacart/bpool"
   packages = ["."]
+  pruneopts = "UT"
   revision = "4e1c5567d7c2dd59fa4c7c83d34c2f3528b025d6"
 
 [[projects]]
+  digest = "1:9e9193aa51197513b3abcb108970d831fbcf40ef96aa845c4f03276e1fa316d2"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
+  pruneopts = "UT"
   revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
   version = "v1.0.5"
 
 [[projects]]
   branch = "master"
+  digest = "1:3f3a05ae0b95893d90b9b3b5afdb79a9b3d96e4e36e099d841ae602e4aca0da8"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
+  pruneopts = "UT"
   revision = "8ac0e0d97ce45cd83d1d7243c060cb8461dda5e9"
 
 [[projects]]
   branch = "master"
+  digest = "1:067165c9dd5a11a9bb25b4cb9116b524a4a1a4df5ebccfdf384e635bbcaab642"
   name = "golang.org/x/net"
   packages = [
     "html",
     "html/atom",
-    "html/charset"
+    "html/charset",
   ]
+  pruneopts = "UT"
   revision = "db08ff08e8622530d9ed3a0e8ac279f6d4c02196"
 
 [[projects]]
   branch = "master"
+  digest = "1:0dca20fb38fcb165d59a17e881e9d2c7e3aa3f939813765c8eed12875346a8dc"
   name = "golang.org/x/sys"
   packages = [
     "unix",
-    "windows"
+    "windows",
   ]
+  pruneopts = "UT"
   revision = "a9e25c09b96b8870693763211309e213c6ef299d"
 
 [[projects]]
+  digest = "1:00b52d21f87065cee85096f07ba40957cc53719145c224da5f5d113669868213"
   name = "golang.org/x/text"
   packages = [
     "encoding",
@@ -164,26 +188,41 @@
     "language",
     "runes",
     "transform",
-    "unicode/cldr"
+    "unicode/cldr",
   ]
+  pruneopts = "UT"
   revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
   version = "v0.3.0"
 
 [[projects]]
+  digest = "1:c25289f43ac4a68d88b02245742347c94f1e108c534dda442188015ff80669b3"
   name = "google.golang.org/appengine"
   packages = ["cloudsql"]
+  pruneopts = "UT"
   revision = "150dc57a1b433e64154302bdc40b6bb8aefa313a"
   version = "v1.0.0"
 
 [[projects]]
+  digest = "1:342378ac4dcb378a5448dd723f0784ae519383532f5e70ade24132c4c8693202"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
+  pruneopts = "UT"
   revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
   version = "v2.2.1"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "85d3bc3ca7faf46947efad86e9a24c812a0cbf129b983905f48e5ba323bb1c03"
+  input-imports = [
+    "github.com/DATA-DOG/go-sqlmock",
+    "github.com/cloudfoundry-community/go-cfenv",
+    "github.com/go-martini/martini",
+    "github.com/go-sql-driver/mysql",
+    "github.com/gorilla/mux",
+    "github.com/martini-contrib/render",
+    "github.com/onsi/ginkgo",
+    "github.com/onsi/gomega",
+    "github.com/sirupsen/logrus",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
