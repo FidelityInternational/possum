@@ -196,7 +196,7 @@ func (c *Controller) SetState(w http.ResponseWriter, r *http.Request) {
 				if !configuredCorrectly {
 					completeDesiredStateBytes, _ := json.Marshal(completeDesiredState)
 					customError(w, http.StatusInternalServerError, fmt.Sprintf("State should have been: %s but was %s", string(completeDesiredStateBytes), string(afterWritePasselStateBytes)))
-					log.WithFields(log.Fields{"package": "webServer", "function": "SetState"}).Debug("State should have been: %s but was %s", string(completeDesiredStateBytes), string(afterWritePasselStateBytes))
+					log.WithFields(log.Fields{"package": "webServer", "function": "SetState"}).Debugf("State should have been: %s but was %s", string(completeDesiredStateBytes), string(afterWritePasselStateBytes))
 					return
 				}
 				w.WriteHeader(http.StatusAccepted)
