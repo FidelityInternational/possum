@@ -448,15 +448,22 @@ func setPasselState(httpClient *http.Client, possum string, passelState []byte) 
 		log.WithFields(log.Fields{"package": "webServer", "function": "setPasselState"}).Debugf("Couldn't authenticate :%s", err)
 		return nil, err
 	}
+
 	defer resp.Body.Close()
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.WithFields(log.Fields{"package": "webServer", "function": "setPasselState"}).Debugf("Couldn't read body of request :%s", err)
 		return nil, err
 	}
+
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		log.WithFields(log.Fields{"package": "webServer", "function": "setPasselState", "response_code": resp.StatusCode}).Debugf("Couldn't authenticate :%s", err)
+		return nil, fmt.Errorf("Couldn't authenticate: %d %s", resp.StatusCode, string(data))
+	}
+
 	err = json.Unmarshal(data, &possumStates)
 	if err != nil {
-		log.WithFields(log.Fields{"package": "webServer", "function": "setPasselState"}).Debugf("Couldn't unmarshal JSON :%s", err)
+		log.WithFields(log.Fields{"package": "webServer", "function": "setPasselState", "data": string(data)}).Debugf("Couldn't unmarshal JSON :%s", err)
 		return nil, err
 	}
 	if possumStates.Error != "" {
