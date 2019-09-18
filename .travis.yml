@@ -2,7 +2,7 @@
 language: go
 
 go:
-  - "1.11"
+  - "1.13"
 
 go_import_path: github.com/FidelityInternational/possum
 
@@ -11,7 +11,7 @@ before_install:
   - go get golang.org/x/tools/cover
 
 script:
-  - gotestcover -coverprofile=coverage.txt -race -covermode=atomic -v $(go list ./... | grep -v '/vendor/')
+  - env GO111MODULE=on go test -mod=vendor -race -coverprofile=coverage.txt -covermode=atomic ./...
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
