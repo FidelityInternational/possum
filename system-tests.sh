@@ -23,8 +23,8 @@ pass() {
 posturl_and_check_result() {
   echo "Endpoint: ${ENDPOINT}"
   echo "Request Data: ${DATA}"
-  echo curl -X POST --max-time 10 --connect-timeout 3 -sLk "https://${POSSUM_USERNAME}:${POSSUM_PASSWORD}@${APP1_HOSTNAME}""${ENDPOINT}" -d "${DATA}"
-  response=$(curl -X POST --max-time 10 --connect-timeout 3 -sLk "https://${POSSUM_USERNAME}:${POSSUM_PASSWORD}@${APP1_HOSTNAME}""${ENDPOINT}" -d "${DATA}")
+  echo curl -X POST --max-time 10 --connect-timeout 9 -sLk "https://${POSSUM_USERNAME}:${POSSUM_PASSWORD}@${APP1_HOSTNAME}""${ENDPOINT}" -d "${DATA}"
+  response=$(curl -X POST --max-time 10 --connect-timeout 9 -sLk "https://${POSSUM_USERNAME}:${POSSUM_PASSWORD}@${APP1_HOSTNAME}""${ENDPOINT}" -d "${DATA}")
   echo "Response: ${response}"
 
   status=$(echo "${response}" | awk "${EXPECTED}")

@@ -20,7 +20,7 @@ pass() {
 }
 
 geturl_and_check_result() {
-  response=$(curl --max-time 10 --connect-timeout 3 -svLk "${APP_URL}""${ENDPOINT}")
+  response=$(curl --max-time 10 --connect-timeout 9 -svLk "${APP_URL}""${ENDPOINT}")
   echo "Response: ${response}"
 
   status=$(echo "${response}" | awk "${EXPECTED}")
