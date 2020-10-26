@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 begin() {
   echo "----------------------Begin Smoke Tests----------------------"
   echo "${APP_URL}"
