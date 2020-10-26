@@ -42,4 +42,6 @@ ENDPOINT=/v1/passel_state
 EXPECTED="/.+possum_states.+/"
 geturl_and_check_result
 
+ls dhjfbakjsdfhas
+
 end
