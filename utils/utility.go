@@ -55,7 +55,8 @@ func SetupStateDB(db *sql.DB) error {
 	_, err := db.Exec(`CREATE TABLE IF NOT EXISTS state
 	(
 		possum varchar(255),
-		state varchar(255)
+		state varchar(255),
+		PRIMARY KEY(possum)
 	)`)
 
 	if err != nil {
