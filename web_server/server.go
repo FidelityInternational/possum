@@ -2,9 +2,10 @@ package webServer
 
 import (
 	"database/sql"
+
 	"github.com/FidelityInternational/possum/utils"
 	"github.com/gorilla/mux"
-	"time"
+
 	// sql driver
 	_ "github.com/go-sql-driver/mysql"
 	log "github.com/sirupsen/logrus"
@@ -46,7 +47,8 @@ func CreateServer(dbConnFunc DBConn, controllerCreator ControllerCreator) (*Serv
 		return nil, err
 	}
 
-	db.SetConnMaxLifetime(time.Minute * 1)
+	db.SetMaxOpenConns(10)
+	db.SetMaxIdleConns(10)
 
 	controller := controllerCreator(db)
 
