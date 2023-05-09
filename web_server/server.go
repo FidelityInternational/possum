@@ -3,8 +3,11 @@ package webServer
 import (
 	"database/sql"
 
+	"time"
+
 	"github.com/FidelityInternational/possum/utils"
 	"github.com/gorilla/mux"
+
 	// sql driver
 	_ "github.com/go-sql-driver/mysql"
 	log "github.com/sirupsen/logrus"
@@ -45,6 +48,9 @@ func CreateServer(dbConnFunc DBConn, controllerCreator ControllerCreator) (*Serv
 		log.WithFields(log.Fields{"package": "webServer", "function": "CreateServer"}).Debugf("Can't set up state DB: %s", err)
 		return nil, err
 	}
+	db.SetConnMaxLifetime(3 * time.Minute)
+	db.SetMaxOpenConns(10)
+	db.SetMaxIdleConns(10)
 
 	controller := controllerCreator(db)
 
